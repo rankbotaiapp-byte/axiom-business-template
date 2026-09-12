@@ -20,11 +20,16 @@ Use [axiom-scout](https://github.com/rankbotaiapp-byte/axiom-scout) before you c
 
 Leave the halo, booking, and Ask Axiom code alone. They already read the config, so answers stay true to that shop.
 
-Bookings stay on the visitor’s device (no accounts).
+Bookings land on the **owner desk** (`/desk`) so the shop sees them. Set the PIN in [`src/config/desk.server.ts`](src/config/desk.server.ts) — last four of the shop phone unless they pick another. Demo PIN for Northline is `0140`.
 
 ## What customers see
 
 - **Shop** — name, hours chip, book, services, hours
 - **Studio** — products with photos and tags
 - **Ask Axiom** — the halo tightens, thinks, replies
-- **Book now** — service → day → time → name
+- **Book now** — service → day → time → name + phone
+
+## What the owner sees
+
+- **`/desk`** — PIN, today’s jobs, upcoming, done / no-show
+- A booking pings the listed shop phone (logged on the board). Real SMS comes later with a carrier key.

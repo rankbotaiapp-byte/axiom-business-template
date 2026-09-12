@@ -4,6 +4,7 @@
  * Swap copy, hours, prices, images, and voice. Leave the rest of the app.
  *
  * Images live in /public/business/  (hero, services, products).
+ * Owner PIN lives in src/config/desk.server.ts (not on the public shop page).
  * ──────────────────────────────────────────────────────────────────────────
  */
 

@@ -8,6 +8,7 @@ import {
   Signal,
   Wifi,
 } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { PhoneFrame } from "@/components/phone-frame";
 import { AxiomMark } from "@/components/axiom-halo";
 import { business } from "@/config/business";
@@ -41,6 +42,10 @@ export function AxiomApp() {
   useEffect(() => {
     const id = window.setInterval(() => setNow(new Date()), 30000);
     return () => window.clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    void useAxiom.getState().hydrateTaken();
   }, []);
 
   const open = isOpenAt(now);
@@ -241,7 +246,7 @@ function Home({ now, open }: { now: Date; open: boolean }) {
         {last && service ? (
           <p className="enter enter-d4 mt-4 text-[13px] text-fg">
             {last.name.split(" ")[0]}, you’re in — {service.name}, {formatDay(last.date)} at{" "}
-            {formatClock(last.time)}.
+            {formatClock(last.time)}. The shop desk has it.
           </p>
         ) : null}
 
@@ -259,6 +264,9 @@ function Home({ now, open }: { now: Date; open: boolean }) {
               Hours
             </button>
           </div>
+          <Link to="/desk" className="desk-entry">
+            Owner desk
+          </Link>
         </div>
       </div>
     </div>
@@ -366,11 +374,15 @@ function Book() {
   const draft = useAxiom((s) => s.draft);
   const patch = useAxiom((s) => s.patchDraft);
   const bookings = useAxiom((s) => s.bookings);
+  const takenRemote = useAxiom((s) => s.taken);
   const confirm = useAxiom((s) => s.confirmBooking);
-  const taken = useMemo(
-    () => new Set(bookings.map((b) => `${b.date}T${b.time}`)),
-    [bookings],
-  );
+  const error = useAxiom((s) => s.error);
+  const [holding, setHolding] = useState(false);
+  const taken = useMemo(() => {
+    const set = new Set(takenRemote);
+    for (const b of bookings) set.add(`${b.date}T${b.time}`);
+    return set;
+  }, [bookings, takenRemote]);
   const days = useMemo(() => upcomingDays(8, taken), [taken]);
   const service = business.services.find((s) => s.id === draft.serviceId);
   const day = days.find((d) => d.date === draft.date);
@@ -443,7 +455,8 @@ function Book() {
           className="mt-5 flex flex-col gap-3"
           onSubmit={(e) => {
             e.preventDefault();
-            confirm();
+            setHolding(true);
+            void confirm().finally(() => setHolding(false));
           }}
         >
           <label className="caption" htmlFor="book-name">
@@ -458,12 +471,25 @@ function Book() {
             autoComplete="name"
             required
           />
+          <label className="caption" htmlFor="book-phone">
+            Phone
+          </label>
+          <input
+            id="book-phone"
+            className="field"
+            type="tel"
+            value={draft.phone}
+            onChange={(e) => patch({ phone: e.target.value })}
+            placeholder="So the shop can reach you"
+            autoComplete="tel"
+          />
+          {error ? <p className="desk-err">{error}</p> : null}
           <button
             type="submit"
             className="cta-fill"
-            disabled={!draft.name.trim() || !service}
+            disabled={!draft.name.trim() || !service || holding}
           >
-            Hold {service?.name ?? "the chair"}
+            {holding ? "Holding…" : `Hold ${service?.name ?? "the chair"}`}
           </button>
         </form>
       ) : null}

@@ -1078,3 +1078,169 @@
     --halo-c7: #3ee0c2;
   }
 }
+
+.desk-entry {
+  align-self: center;
+  margin-top: 10px;
+  color: var(--color-faint);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.desk-entry:hover {
+  color: var(--color-muted);
+}
+
+.desk-shell {
+  min-height: 100dvh;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 28px 20px 64px;
+  display: flex;
+  flex-direction: column;
+}
+
+.desk-head {
+  margin-bottom: 22px;
+}
+
+.desk-gate {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.desk-pin {
+  letter-spacing: 0.4em;
+  font-size: 22px;
+  text-align: center;
+}
+
+.desk-err {
+  color: var(--color-halo-coral);
+  font-size: 13px;
+}
+
+.desk-filters {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.desk-filter {
+  height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-muted);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.1);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.desk-filter[data-on="true"] {
+  background: var(--color-accent);
+  color: var(--color-accent-fg);
+  box-shadow: none;
+}
+
+.desk-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+}
+
+.desk-card {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 8px 14px;
+  padding: 16px;
+  border-radius: 20px;
+  background: var(--color-surface);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.08);
+}
+
+.desk-card__time {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.desk-card__body {
+  min-width: 0;
+}
+
+.desk-tel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  color: var(--color-fg);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.desk-card__acts {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.desk-act {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--color-raised);
+  color: var(--color-fg);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.desk-act--ok {
+  background: color-mix(in oklab, var(--color-halo-mint) 16%, var(--color-raised));
+}
+
+.desk-status {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  align-self: center;
+}
+
+.desk-card[data-status="no-show"] .desk-status {
+  color: var(--color-halo-coral);
+}
+
+.desk-card[data-status="done"] .desk-status {
+  color: var(--color-halo-mint);
+}
+
+.desk-foot {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 32px;
+}
+
+.desk-foot button,
+.desk-foot a {
+  background: none;
+  border: 0;
+  color: var(--color-muted);
+  text-decoration: none;
+}

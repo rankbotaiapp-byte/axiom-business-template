@@ -1,0 +1,15 @@
+node_modules
+dist
+.output
+.vinxi
+.nitro
+.tanstack
+.vercel
+.cache
+.DS_Store
+.env
+.env.local
+.env.*.local
+*.log
+.project_id
+.node_modules.lock

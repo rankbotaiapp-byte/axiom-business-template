@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="halo" x1="7" y1="4" x2="25" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4CC9F0"/>
+      <stop offset="0.16" stop-color="#5B8CFF"/>
+      <stop offset="0.33" stop-color="#9B6DFF"/>
+      <stop offset="0.5" stop-color="#F062C0"/>
+      <stop offset="0.66" stop-color="#FF7A59"/>
+      <stop offset="0.83" stop-color="#FFD166"/>
+      <stop offset="1" stop-color="#3EE0C2"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="8" fill="#0C0B10"/>
+  <rect x="8" y="5.5" width="16" height="21" rx="5.5" fill="none" stroke="url(#halo)" stroke-width="3"/>
+</svg>

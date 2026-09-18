@@ -1,9 +1,29 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert } from 'react-native';
 
-export default function DeskScreen() {
+export default function MasterDeskScreen() {
   const [pin, setPin] = useState('');
   const [unlocked, setUnlocked] = useState(false);
+  const [activeTab, setActiveTab] = useState<'receipts' | 'barbers' | 'inventory' | 'location'>('receipts');
+
+  const [receipts, setReceipts] = useState([
+    { id: '1', timestamp: '10:42 AM', customerPrompt: 'Is haircut $20?', aiOriginal: 'Yes, $20 total.', fixedResponse: 'Haircuts start at $30; $20 is child trim.' },
+  ]);
+
+  const [barbers, setBarbers] = useState([
+    { id: '1', name: 'Marcus (Master Barber)' },
+    { id: '2', name: 'Elena (Fade Specialist)' },
+  ]);
+  const [newBarber, setNewBarber] = useState('');
+
+  const [items, setItems] = useState([
+    { id: '1', name: 'Signature Pomade', price: '$22.00' },
+  ]);
+  const [itemName, setItemName] = useState('');
+  const [itemPrice, setItemPrice] = useState('');
+
+  const [currentLocation, setCurrentLocation] = useState('123 Main St, Central Shop');
+  const [locationInput, setLocationInput] = useState('');
 
   const handleUnlock = () => {
     if (pin === '1234' || pin === '0000' || pin.length >= 4) {
@@ -13,40 +33,153 @@ export default function DeskScreen() {
     }
   };
 
-  if (unlocked) {
+  const addBarber = () => {
+    if (!newBarber.trim()) return;
+    setBarbers([...barbers, { id: Date.now().toString(), name: newBarber }]);
+    setNewBarber('');
+  };
+
+  const addItem = () => {
+    if (!itemName.trim() || !itemPrice.trim()) return;
+    setItems([...items, { id: Date.now().toString(), name: itemName, price: itemPrice }]);
+    setItemName('');
+    setItemPrice('');
+  };
+
+  const updateLocation = () => {
+    if (!locationInput.trim()) return;
+    setCurrentLocation(locationInput);
+    setLocationInput('');
+    Alert.alert('Success', 'Live location updated!');
+  };
+
+  if (!unlocked) {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Irish Ink & Master Barber Desk</Text>
-        <Text style={styles.subtitle}>Owner & Staff Controls Unlocked</Text>
+        <Text style={styles.title}>Irish Ink & Master Barber</Text>
+        <Text style={styles.subtitle}>Enter Security PIN to Access</Text>
+        <TextInput
+          style={styles.input}
+          value={pin}
+          onChangeText={setPin}
+          placeholder="Enter PIN"
+          placeholderTextColor="#666"
+          keyboardType="numeric"
+          secureTextEntry
+        />
+        <TouchableOpacity style={styles.button} onPress={handleUnlock}>
+          <Text style={styles.buttonText}>Unlock Desk</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Irish Ink Admin Desk</Text>
-      <Text style={styles.subtitle}>Enter Security PIN to Access</Text>
-      <TextInput
-        style={styles.input}
-        value={pin}
-        onChangeText={setPin}
-        placeholder="Enter PIN"
-        placeholderTextColor="#666"
-        keyboardType="numeric"
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.button} onPress={handleUnlock}>
-        <Text style={styles.buttonText}>Unlock Desk</Text>
-      </TouchableOpacity>
+    <View style={styles.dashboard}>
+      <Text style={styles.headerTitle}>Irish Ink Admin Control</Text>
+      
+      <View style={styles.navRow}>
+        <TouchableOpacity style={[styles.tab, activeTab === 'receipts' && styles.activeTab]} onPress={() => setActiveTab('receipts')}>
+          <Text style={styles.tabText}>AI Audit</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.tab, activeTab === 'barbers' && styles.activeTab]} onPress={() => setActiveTab('barbers')}>
+          <Text style={styles.tabText}>Barbers</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.tab, activeTab === 'inventory' && styles.activeTab]} onPress={() => setActiveTab('inventory')}>
+          <Text style={styles.tabText}>Inventory</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.tab, activeTab === 'location' && styles.activeTab]} onPress={() => setActiveTab('location')}>
+          <Text style={styles.tabText}>Location</Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView style={styles.content}>
+        {activeTab === 'receipts' && (
+          <View>
+            <Text style={styles.sectionHeader}>AI Deception Audit Log</Text>
+            {receipts.map((r) => (
+              <View key={r.id} style={styles.card}>
+                <Text style={styles.timeTag}>[{r.timestamp}] Deception Corrected</Text>
+                <Text style={styles.cardText}>User: {r.customerPrompt}</Text>
+                <Text style={styles.cardTextError}>AI Output: {r.aiOriginal}</Text>
+                <Text style={styles.cardTextSuccess}>Fixed: {r.fixedResponse}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {activeTab === 'barbers' && (
+          <View>
+            <Text style={styles.sectionHeader}>Barber Roster</Text>
+            <View style={styles.inputRow}>
+              <TextInput style={styles.flexInput} value={newBarber} onChangeText={setNewBarber} placeholder="Barber Name" placeholderTextColor="#666" />
+              <TouchableOpacity style={styles.actionBtn} onPress={addBarber}><Text style={styles.btnText}>Add</Text></TouchableOpacity>
+            </View>
+            {barbers.map((b) => (
+              <View key={b.id} style={styles.listItem}>
+                <Text style={styles.itemText}>{b.name}</Text>
+                <TouchableOpacity onPress={() => setBarbers(barbers.filter(x => x.id !== b.id))}><Text style={styles.deleteText}>Delete</Text></TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {activeTab === 'inventory' && (
+          <View>
+            <Text style={styles.sectionHeader}>Store Inventory</Text>
+            <TextInput style={styles.fullInput} value={itemName} onChangeText={setItemName} placeholder="Product Title" placeholderTextColor="#666" />
+            <TextInput style={styles.fullInput} value={itemPrice} onChangeText={setItemPrice} placeholder="Price ($0.00)" placeholderTextColor="#666" />
+            <TouchableOpacity style={styles.button} onPress={addItem}><Text style={styles.buttonText}>Add Item</Text></TouchableOpacity>
+
+            {items.map((i) => (
+              <View key={i.id} style={styles.listItem}>
+                <Text style={styles.itemText}>{i.name} - {i.price}</Text>
+                <TouchableOpacity onPress={() => setItems(items.filter(x => x.id !== i.id))}><Text style={styles.deleteText}>Delete</Text></TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {activeTab === 'location' && (
+          <View>
+            <Text style={styles.sectionHeader}>Location Broadcast</Text>
+            <Text style={styles.currentLocText}>Active: {currentLocation}</Text>
+            <TextInput style={styles.fullInput} value={locationInput} onChangeText={setLocationInput} placeholder="New Address" placeholderTextColor="#666" />
+            <TouchableOpacity style={styles.button} onPress={updateLocation}><Text style={styles.buttonText}>Update Spot</Text></TouchableOpacity>
+          </View>
+        )}
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0B0C0E', justifyContent: 'center', alignItems: 'center', padding: 20 },
+  dashboard: { flex: 1, backgroundColor: '#0B0C0E', padding: 20, paddingTop: 50 },
   title: { color: '#ffffff', fontSize: 28, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' },
   subtitle: { color: '#888888', fontSize: 16, marginBottom: 24, textAlign: 'center' },
+  headerTitle: { color: '#D4AF37', fontSize: 24, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' },
   input: { width: '80%', height: 50, backgroundColor: '#1A1B1E', color: '#fff', borderRadius: 8, paddingHorizontal: 16, fontSize: 18, marginBottom: 16, textAlign: 'center' },
-  button: { width: '80%', height: 50, backgroundColor: '#D4AF37', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
+  fullInput: { width: '100%', height: 48, backgroundColor: '#1A1B1E', color: '#fff', borderRadius: 8, paddingHorizontal: 12, marginBottom: 12 },
+  button: { width: '100%', height: 50, backgroundColor: '#D4AF37', borderRadius: 8, justifyContent: 'center', alignItems: 'center', marginTop: 8 },
   buttonText: { color: '#000000', fontSize: 16, fontWeight: 'bold' },
+  navRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
+  tab: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 6, backgroundColor: '#1A1B1E' },
+  activeTab: { backgroundColor: '#D4AF37' },
+  tabText: { color: '#ffffff', fontWeight: 'bold', fontSize: 12 },
+  content: { flex: 1 },
+  sectionHeader: { color: '#ffffff', fontSize: 18, fontWeight: 'bold', marginBottom: 12 },
+  card: { backgroundColor: '#16171A', padding: 12, borderRadius: 8, marginBottom: 12, borderWidth: 1, borderColor: '#333' },
+  timeTag: { color: '#D4AF37', fontSize: 11, fontWeight: 'bold', marginBottom: 4 },
+  cardText: { color: '#cccccc', fontSize: 13, marginBottom: 2 },
+  cardTextError: { color: '#FF6B6B', fontSize: 13, marginBottom: 2 },
+  cardTextSuccess: { color: '#51CF66', fontSize: 13 },
+  inputRow: { flexDirection: 'row', marginBottom: 12 },
+  flexInput: { flex: 1, height: 44, backgroundColor: '#1A1B1E', color: '#fff', borderRadius: 8, paddingHorizontal: 12, marginRight: 8 },
+  actionBtn: { width: 70, backgroundColor: '#D4AF37', borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
+  btnText: { color: '#000000', fontWeight: 'bold' },
+  listItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#16171A', padding: 12, borderRadius: 8, marginBottom: 8 },
+  itemText: { color: '#ffffff', fontSize: 15, fontWeight: 'bold' },
+  deleteText: { color: '#FF6B6B', fontWeight: 'bold' },
+  currentLocText: { color: '#51CF66', fontSize: 15, marginBottom: 12, fontWeight: 'bold' }
 });

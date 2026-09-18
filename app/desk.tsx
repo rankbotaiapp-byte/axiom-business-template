@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert 
 
 export default function MasterDeskScreen() {
   const [pin, setPin] = useState('');
+  const [adminPin, setAdminPin] = useState('1234');
   const [unlocked, setUnlocked] = useState(false);
   const [activeTab, setActiveTab] = useState<'receipts' | 'barbers' | 'inventory' | 'location'>('receipts');
 
@@ -27,7 +28,7 @@ export default function MasterDeskScreen() {
   const [locationInput, setLocationInput] = useState('');
 
   const handleUnlock = () => {
-    if (pin === '1234' || pin === '0000' || pin.length >= 4) {
+    if (pin === adminPin || pin === '0000' || pin.length >= 4) {
       setUnlocked(true);
     } else {
       Alert.alert('Error', 'Invalid PIN');
@@ -68,6 +69,12 @@ export default function MasterDeskScreen() {
       <View style={styles.container}>
         <Text style={styles.title}>Master Owner Desk</Text>
         <Text style={styles.subtitle}>Enter Security PIN</Text>
+        
+        {/* Active Admin PIN Hint Display */}
+        <View style={styles.pinHintContainer}>
+          <Text style={styles.pinHintText}>Admin PIN: <Text style={styles.pinHighlight}>{adminPin}</Text></Text>
+        </View>
+
         <TextInput
           style={styles.input}
           value={pin}
@@ -88,6 +95,12 @@ export default function MasterDeskScreen() {
     <View style={styles.dashboard}>
       <Text style={styles.headerTitle}>Axiom Master Control</Text>
       
+      {/* Active PIN Badge in Dashboard */}
+      <View style={styles.pinBadge}>
+        <Text style={styles.pinBadgeLabel}>System Security PIN:</Text>
+        <Text style={styles.pinBadgeValue}>{adminPin}</Text>
+      </View>
+
       <View style={styles.navRow}>
         <TouchableOpacity style={[styles.tab, activeTab === 'receipts' && styles.activeTab]} onPress={() => setActiveTab('receipts')}>
           <Text style={styles.tabText}>AI Audit</Text>
@@ -171,8 +184,14 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0B0C0E', justifyContent: 'center', alignItems: 'center', padding: 20 },
   dashboard: { flex: 1, backgroundColor: '#0B0C0E', padding: 20, paddingTop: 50 },
   title: { color: '#ffffff', fontSize: 28, fontWeight: 'bold', marginBottom: 8 },
-  subtitle: { color: '#888888', fontSize: 16, marginBottom: 24 },
-  headerTitle: { color: '#D4AF37', fontSize: 24, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' },
+  subtitle: { color: '#888888', fontSize: 16, marginBottom: 16 },
+  pinHintContainer: { backgroundColor: '#1A1B1E', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 6, marginBottom: 20 },
+  pinHintText: { color: '#888888', fontSize: 14 },
+  pinHighlight: { color: '#D4AF37', fontWeight: 'bold', fontSize: 16 },
+  pinBadge: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#16171A', padding: 12, borderRadius: 8, marginBottom: 16, borderWidth: 1, borderColor: '#333' },
+  pinBadgeLabel: { color: '#888888', fontSize: 14 },
+  pinBadgeValue: { color: '#51CF66', fontSize: 18, fontWeight: 'bold', letterSpacing: 2 },
+  headerTitle: { color: '#D4AF37', fontSize: 24, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' },
   input: { width: '80%', height: 50, backgroundColor: '#1A1B1E', color: '#fff', borderRadius: 8, paddingHorizontal: 16, fontSize: 18, marginBottom: 16, textAlign: 'center' },
   fullInput: { width: '100%', height: 48, backgroundColor: '#1A1B1E', color: '#fff', borderRadius: 8, paddingHorizontal: 12, marginBottom: 12 },
   button: { width: '100%', height: 50, backgroundColor: '#D4AF37', borderRadius: 8, justifyContent: 'center', alignItems: 'center', marginTop: 8 },
